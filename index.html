@@ -7,21 +7,20 @@
     <title>Star Wars Trivia</title>
 </head>
 <body>
-    
-    <select name="characters" id="characters">
-        <option value="1">Luke Skywalker</option>
-        <option value="2">C-3PO</option>
-        <option value="3">R2-D2</option>
-        <option value="4">Darth Vader</option>
-        <option value="5">Owen Lars</option>
-        <option value="6">R5-D4</option>
-        <option value="7">Biggs Darklighter</option>
-        <option value="46">Ayla Secura</option>
-    </select>
+    <div>
+    <select name="charactersList1" id="charList1"></select>
+    <select name="charactersList2" id="charList2"></select>
+    <button id="getInfoBtn">Get Characters info</button>
+    <button id="compareBtn" disabled>Compare Characters</button> 
+    </div>
 
+    <div class="profileContainer">
+        <div id="char1"></div>
+        <div id="char2"></div>
+    </div>
 
-    <button onclick="createChar()">Get character info</button>
-    <div class="profileContainer"></div>
+    <div class="compareResult"></div>
+
 <script src="main.js"></script>
 </body>
 </html>
