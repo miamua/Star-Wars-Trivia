@@ -9,7 +9,10 @@ class Character {
       hairColor,
       skinColor,
       movies,
-      pictureUrl
+      pictureUrl,
+      homeWorld,
+      allMoviesName,
+      
     ) {
       this.name = name;
       this.gender = gender;
@@ -19,9 +22,23 @@ class Character {
       this.skinColor = skinColor;
       this.movies = movies;
       this.pictureUrl = pictureUrl;
+      this.homeWorld = homeWorld;
+      this.moviesNames = allMoviesName = [];
+      this.getMoviesName();
     }
-  }
-  
+    async getMoviesName() {
+      this.movies.forEach(async(movie) => {
+          let theMovie = await fetch(movie);
+          let movieName = await theMovie.json();
+          this.moviesNames.push(movieName);
+          
+          })
+      }
+    
+  };
+
+
+
   const fetchData = async (url) => {
     let response = await fetch(url);
     let json = await response.json();
@@ -33,7 +50,6 @@ class Character {
   let allCharacters = [];
   
   let getAllchar = async () => {
-    
     for (let i = 1; i < 17; i++) {
       pageParam = i;
       console.log(pageParam);
@@ -51,7 +67,7 @@ class Character {
       let charMovies = films;
       let pictureUrl = `${charName}+.webp`;
       */
-      let pictureUrl = data.name+`.webp`;
+      let pictureUrl = data.name+`.jpg`;
       let newChar = new Character(
         /*
         charName,
@@ -62,7 +78,7 @@ class Character {
         charSkin,
         charMovies
         */
-       data.name, data.gender, data.height, data.mass, data.hair_color, data.skin_color, data.films, pictureUrl
+       data.name, data.gender, data.height, data.mass, data.hair_color, data.skin_color, data.films, pictureUrl, data.homeworld,
       );
       
 
@@ -98,37 +114,43 @@ class Character {
        
     char1Div.append(char1PicDiv);
     char2Div.append(char2PicDiv);
+    
+  };
+
+
+  let dropdown1 = document.querySelector("#charList1");
+  let dropdown2 = document.querySelector("#charList2");
+  let getInfoBtn = document.querySelector("#getInfoBtn");
+  getInfoBtn.addEventListener("click", () => {
+  selectedChar = [];
+  compareBtn.disabled = false;
+  //movieNameBtn.disabled = false;
+  compareResultContainer.innerHTML = "";
+
+  let selectedOne = allCharacters.find(item => item.name === dropdown1.value);
+  let selectedTwo = allCharacters.find(item => item.name === dropdown2.value);
+
+  console.log(selectedOne);
+  console.log(selectedTwo);
   
-  }
+  selectedChar.push(selectedOne,selectedTwo);
+  onRender(selectedOne,selectedTwo);
+  
 
-    let dropdown1 = document.querySelector("#charList1");
-    let dropdown2 = document.querySelector("#charList2");
-    let getInfoBtn = document.querySelector("#getInfoBtn");
-    getInfoBtn.addEventListener("click", () => {
-    selectedChar = [];
-    compareBtn.disabled = false;
-    compareResultContainer.innerHTML = "";
-
-    let selectedOne = allCharacters.find(item => item.name === dropdown1.value);
-    let selectedTwo = allCharacters.find(item => item.name === dropdown2.value);
-
-    console.log(selectedOne);
-    console.log(selectedTwo);
-
-    selectedChar.push(selectedOne,selectedTwo);
-    onRender(selectedOne,selectedTwo);
+    
   });
   
   let compareBtn = document.querySelector("#compareBtn");
     compareBtn.addEventListener("click", () => {
       compareResultContainer.innerHTML = "";
 
-    
     compare();
     compareBtn.disabled = true;
+    
   });
 
   getAllchar();
+  
 
 let compareResultContainer = document.querySelector(".compareResult");
 let compare = () =>{
@@ -240,3 +262,31 @@ let compare = () =>{
 };
 
 
+let movieNameBtn = document.querySelector("#moviesName");
+movieNameBtn.addEventListener("click", () => {
+    let moivesName1 = document.createElement("div");
+    let moivesName2 = document.createElement("div");
+    
+    selectedChar[0].moviesNames.forEach((movie) => {
+      let renderMoviesName1 = document.createElement("ul");
+      renderMoviesName1.innerHTML = `<li>${movie.title}</li>`;
+      console.log(`Char1 movies: ${movie.title}`);
+      moivesName1.append(renderMoviesName1);  
+    });
+
+    selectedChar[1].moviesNames.forEach((movie) => {
+      let renderMoviesName2 = document.createElement("ul");
+      renderMoviesName2.innerHTML = `<li>${movie.title}</li>`;
+      console.log(`Char2 movies: ${movie.title}`);
+      moivesName2.append(renderMoviesName2);
+    });
+    
+    char1Div.append(moivesName1);
+    char2Div.append(moivesName2); 
+    
+  });
+
+  
+
+
+ 
