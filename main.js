@@ -12,6 +12,7 @@ class Character {
       pictureUrl,
       homeWorld,
       allMoviesName,
+      movieDates,
       
     ) {
       this.name = name;
@@ -25,6 +26,8 @@ class Character {
       this.homeWorld = homeWorld;
       this.moviesNames = allMoviesName = [];
       this.getMoviesName();
+      this.movieDate =  movieDates = [];
+      this.getFirstDate();
     }
     async getMoviesName() {
       this.movies.forEach(async(movie) => {
@@ -33,7 +36,16 @@ class Character {
           this.moviesNames.push(movieName);
           
           })
-      }
+    }
+    async getFirstDate(){
+      this.movies.forEach(async(movie) => {
+        let theMovie = await fetch(movie);
+        let movieDates = await theMovie.json();
+        this.movieDate.push(movieDates.release_date);
+      })
+    }
+
+
     
   };
 
@@ -123,8 +135,12 @@ class Character {
   let getInfoBtn = document.querySelector("#getInfoBtn");
   getInfoBtn.addEventListener("click", () => {
   selectedChar = [];
+  //compareBtn.style.display = "inherit";
   compareBtn.disabled = false;
-  //movieNameBtn.disabled = false;
+  movieNameBtn.disabled = false;
+  //firstAppearBtn.disabled = false;
+  //movieNameBtn.style.display = "inherit";
+  
   compareResultContainer.innerHTML = "";
 
   let selectedOne = allCharacters.find(item => item.name === dropdown1.value);
@@ -283,9 +299,36 @@ movieNameBtn.addEventListener("click", () => {
     
     char1Div.append(moivesName1);
     char2Div.append(moivesName2); 
+
+    movieNameBtn.disabled = true;
     
   });
 
+  let firstAppearBtn = document.querySelector("#moviesDate");
+  firstAppearBtn.addEventListener("click", () =>{
+    //let char1DatDiv = document.createElement("div");
+    //let char2DatDiv = document.createElement("div");
+    
+    let char1FirstDate = selectedChar[0].movieDate.sort(function(a,b){
+      return Date.parse(a) > Date.parse(b);
+    });
+    console.log(`${char1FirstDate[0]}`);
+    let char1DateText = document.createElement("p");
+    char1DateText.innerText = `${selectedChar[0].name} first appeared in a movie ${char1FirstDate[0]}`;
+
+
+    let char2FirstDate = selectedChar[1].movieDate.sort(function(a,b){
+      return Date.parse(a) > Date.parse(b);
+    });
+    console.log(`${char2FirstDate[0]}`);
+    let char2DateText = document.createElement("p");
+    char2DateText.innerText = `${selectedChar[1].name} first appeared in a movie ${char2FirstDate[0]}`;
+
+    
+    char1Div.append(char1DateText);
+    char2Div.append(char2DateText);
+
+  });
   
 
 
