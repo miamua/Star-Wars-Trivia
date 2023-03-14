@@ -1,0 +1,22 @@
+.profileContainer {
+  background-color: lightgray;
+  display: flex;
+  justify-content: space-around;
+}
+.profileContainer #char1 {
+  border: solid black 1px;
+  padding: 20px;
+}
+.profileContainer #char1 #char1MoviesDiv {
+  color: black;
+}
+.profileContainer #char2 {
+  border: solid black 1px;
+  padding: 20px;
+}
+
+.compareResult {
+  background-color: lightpink;
+  display: fex;
+  justify-items: center;
+}/*# sourceMappingURL=style.css.map */
