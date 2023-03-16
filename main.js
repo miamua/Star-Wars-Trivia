@@ -48,9 +48,9 @@ class Character {
   }
 
   async mostExpensiveVehicle() {
+    //Collect highest price of vehicle and starship and replace unknown and empty array with a 0.
     let pricesOfVehicles = [];
     let pricesOfStarship = [];
-
     if (this.vehicle.length === 0) {
       pricesOfVehicles.push("0");
     } else {
@@ -83,23 +83,9 @@ class Character {
       });
     }
 
-    console.log(pricesOfVehicles);
-    console.log(pricesOfStarship);
-
+    //Get the most expensive vehicle and starship and put the most pricy in the dyrasteFordonsPris variable.
     let theMostexpensiveVehicles = Math.max(...pricesOfVehicles);
     let theMostexpensiveStarship = Math.max(...pricesOfStarship);
-    
-    console.log(
-      `${this.name} most expensive vechicle costs ${Math.max(
-        ...pricesOfVehicles
-      )}`
-    );
-    console.log(
-      `${this.name} most expensive starship costs ${Math.max(
-        ...pricesOfStarship
-      )}`
-    );
-
     let dyrasteFordonsPris = "";
     let noVehiclesAtall = false;
     if (theMostexpensiveVehicles > theMostexpensiveStarship) {
@@ -107,7 +93,7 @@ class Character {
     } else {
       dyrasteFordonsPris = theMostexpensiveStarship;
     };
-    console.log(dyrasteFordonsPris);
+
     if (dyrasteFordonsPris == 0) {
       noVehiclesAtall = true;
     };
@@ -120,10 +106,10 @@ class Character {
           (item) => item.cost_in_credits == dyrasteFordonsPris
         );
         this.mostExpensiveCraft = dyrasteFordon;
-        console.log(dyrasteFordon);
       } catch (error) {
         console.log(error);
       }
+
       try {
         dyrasteStarskepp = await this.starship.find(
           (item) => item.cost_in_credits == dyrasteFordonsPris
@@ -195,24 +181,13 @@ async function getStarship(url) {
 
 let getAllchar = async () => {
   for (let i = 1; i < 17; i++) {
-    console.log(i);
     let data = await fetchData(`https://swapi.dev/api/people/${i}`);
     console.log(data);
     let getMovieNames = movieNames(await data.films);
-    //console.log(getMovieNames);
-
     let getMovieDates = movieDates(await data.films);
-    //console.log(getMovieDates);
-
     let getHomeWorld = await homePlanet(data.homeworld);
-    //console.log(getHomeWorld);
-
     let vehicles = await getVehicle(data.vehicles);
-    //console.log(vehicles);
-
     let starship = await getStarship(data.starships);
-    //console.log(starship);
-
     let pictureUrl = data.name + `.jpg`;
     let newChar = new Character(
       data.name,
@@ -264,12 +239,8 @@ let onRender = (char1, char2) => {
   char2Div.append(char2PicDiv);
 };
 
-let dropdown1 = document.querySelector("#charList1");
-let dropdown2 = document.querySelector("#charList2");
 
 let compare = () => {
-  console.log(selectedChar);
-
   let tallestChar = "";
   let heaviestChar = "";
   let mostMoviesChar = "";
@@ -369,6 +340,9 @@ compareResult.setAttribute("id","compareResultDiv");
 
 let selectedChar = [];
 let allCharacters = [];
+let dropdown1 = document.querySelector("#charList1");
+let dropdown2 = document.querySelector("#charList2");
+
 ///// BUTTONS /////
 getInfoBtn.addEventListener("click", () => {
   compareBtn.disabled = false;
@@ -381,13 +355,11 @@ getInfoBtn.addEventListener("click", () => {
   selectedChar = [];
   let selectedOne = allCharacters.find((item) => item.name === dropdown1.value);
   let selectedTwo = allCharacters.find((item) => item.name === dropdown2.value);
-  console.log(selectedOne);
-  console.log(selectedTwo);
   selectedChar.push(selectedOne, selectedTwo);
   onRender(selectedOne, selectedTwo);
 });
 
-
+//Compare the selected characters.
 let compareBtn = document.querySelector("#compareBtn");
 compareBtn.addEventListener("click", () => {
   compareResultContainer.innerHTML = "";
@@ -396,7 +368,7 @@ compareBtn.addEventListener("click", () => {
   compareBtn.disabled = true;
 });
 
-
+// Get movie names from the characters film array.
 let movieNameBtn = document.querySelector("#moviesName");
 movieNameBtn.addEventListener("click", async () => {
   let moivesName1 = document.createElement("div");
@@ -407,24 +379,21 @@ movieNameBtn.addEventListener("click", async () => {
   selectedChar[0].moviesNames.forEach((movie) => {
     let renderMoviesName1 = document.createElement("ul");
     renderMoviesName1.innerHTML = `<li>${movie}</li>`;
-    console.log(`Char1 movies: ${movie}`);
     moivesName1.append(renderMoviesName1);
   });
 
   selectedChar[1].moviesNames.forEach((movie) => {
     let renderMoviesName2 = document.createElement("ul");
     renderMoviesName2.innerHTML = `<li>${movie}</li>`;
-    console.log(`Char2 movies: ${movie}`);
     moivesName2.append(renderMoviesName2);
   });
 
   char1PicDiv.append(moivesName1);
   char2PicDiv.append(moivesName2);
-
   movieNameBtn.disabled = true;
 });
 
-
+// Get movies from selected characters and get the earliest date.
 let firstAppearBtn = document.querySelector("#moviesDate");
 firstAppearBtn.addEventListener("click", async () => {
   let char1FirstDate = await selectedChar[0].getFirstDate();
@@ -443,16 +412,13 @@ firstAppearBtn.addEventListener("click", async () => {
   firstAppearBtn.disabled = true;
 });
 
-
+// Get planets from selected characters.
 let homePlanetBtn = document.querySelector("#planet");
 homePlanetBtn.addEventListener("click", async () => {
   let char1Home = await selectedChar[0].getHomePlanet();
   let char2Home = await selectedChar[1].getHomePlanet();
-  console.log(`${char1Home}`);
   let char1HomeText = document.createElement("p");
   char1HomeText.innerText = `${selectedChar[0].name} lives in ${char1Home}.`;
-
-  console.log(`${char2Home}`);
   let char2HomeText = document.createElement("p");
   char2HomeText.innerText = `${selectedChar[1].name} lives in ${char2Home}.`;
 
@@ -468,13 +434,12 @@ homePlanetBtn.addEventListener("click", async () => {
   homePlanetBtn.disabled = true;
 });
 
-
+//if a character has a vehicle with an unknown price or has no vehicle, there will be "undefined" name from the array.
 let vehicleBtn = document.querySelector("#expensiveVehicle");
 vehicleBtn.addEventListener("click", async () => {
   await selectedChar[0].mostExpensiveVehicle();
   await selectedChar[1].mostExpensiveVehicle();
 
-  console.log(selectedChar[0].mostExpensiveCraft);
   let char1Expensivevehicle = document.createElement("p");
   if (selectedChar[0].mostExpensiveCraft.name === undefined) {
     char1Expensivevehicle.innerText = `${selectedChar[0].name} doesn't have any vehicle or the vehicle has an unknown price.`;
@@ -482,7 +447,6 @@ vehicleBtn.addEventListener("click", async () => {
     char1Expensivevehicle.innerText = `${selectedChar[0].name}'s most expensive vehicle is ${selectedChar[0].mostExpensiveCraft.name}, and it costs ${selectedChar[0].mostExpensiveCraft.cost_in_credits}.`;
   }
 
-  console.log(selectedChar[1].mostExpensiveCraft);
   let char2Expensivevehicle = document.createElement("p");
   if (selectedChar[1].mostExpensiveCraft.name === undefined) {
     char2Expensivevehicle.innerText = `${selectedChar[1].name} doesn't have any vehicle or the vehicle has an unknown price.`;
